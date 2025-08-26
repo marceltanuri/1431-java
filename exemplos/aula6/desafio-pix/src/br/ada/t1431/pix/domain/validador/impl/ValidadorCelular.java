@@ -1,10 +1,16 @@
 package br.ada.t1431.pix.domain.validador.impl;
-import model.exception.ChavePixInvalidaException;
+
+import br.ada.t1431.pix.domain.exception.ChavePixInvalidaException;
 import br.ada.t1431.pix.domain.validador.Validador;
 
 public class ValidadorCelular implements Validador {
     @Override
     public void validar(String valor) throws ChavePixInvalidaException {
+        final String REGEX_FORMATO_CELULAR = "^\\d{11}$";
+        final String MENSAGEM_FORMATO_INVALIDO = "Formato de celular inválido. Esperado 11 dígitos numéricos (ex: 11987654321).";
 
+        if (valor == null || !valor.matches(REGEX_FORMATO_CELULAR)) {
+            throw new ChavePixInvalidaException(MENSAGEM_FORMATO_INVALIDO);
+        }
     }
 }

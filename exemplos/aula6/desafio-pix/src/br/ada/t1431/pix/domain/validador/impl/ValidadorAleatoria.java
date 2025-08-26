@@ -1,6 +1,6 @@
 package br.ada.t1431.pix.domain.validador.impl;
 
-import model.exception.ChavePixInvalidaException;
+import br.ada.t1431.pix.domain.exception.ChavePixInvalidaException;
 import br.ada.t1431.pix.domain.validador.Validador;
 
 public class ValidadorAleatoria implements Validador {

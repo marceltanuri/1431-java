@@ -7,10 +7,10 @@ import br.ada.t1431.pix.domain.validador.Validador;
 // Abstração, Encapsulamento, Herança, Polimorfismo
 public class ChavePix {
 
-    TipoDeChavePix tipo;
-    String valor;
-    DadosBancarios dadosBancarios;
-    Validador validador;
+    private final TipoDeChavePix tipo;
+    private final String valor;
+    private final DadosBancarios dadosBancarios;
+    private final Validador validador;
 
     ChavePix(TipoDeChavePix tipo, String valor, DadosBancarios dadosBancarios, Validador validador) {
         this.tipo = tipo;
@@ -24,4 +24,15 @@ public class ChavePix {
         validador.validar(this.valor);
     }
 
+    public TipoDeChavePix getTipo() {
+        return tipo;
+    }
+
+    public String getValor() {
+        return valor;
+    }
+
+    public DadosBancarios getDadosBancarios() {
+        return dadosBancarios;
+    }
 }
