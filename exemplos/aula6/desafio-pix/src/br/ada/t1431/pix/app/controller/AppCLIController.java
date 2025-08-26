@@ -27,15 +27,10 @@ public class AppCLIController {
     }
 
     // -i: instituicao
-    // -cn: numero da conta
+    // -c: numero da conta
     // -a: agencia
-    // -ct: tipoDeContaBancaria de conta
+    // -tc: tipoDeContaBancaria de conta
     // -t: tipoDeContaBancaria da chave
     // -v: valor da chave
     // -cmd comando
-
-    // java Main -a asaas -b sadsds -c dfddfd -d sdsdsfs
-
-    // Main (entrada dos parametros) -> Controller -> Service -> Usar o dominio (modelo) e orquestar (se necessario) com o Repository -> Repository
-
 }
