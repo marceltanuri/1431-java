@@ -28,6 +28,7 @@ public class CadastrarCommand implements Command {
             System.out.println("Chave cadastrada com sucesso!");
         } catch (Exception e) {
             System.out.println("Erro ao salvar a chave. " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -1,6 +1,7 @@
 package br.ada.t1431.pix.infrastructure.repository;
 
 import br.ada.t1431.pix.app.dto.ChavePixDTO;
+import br.ada.t1431.pix.domain.exception.ChaveDuplicadaException;
 import br.ada.t1431.pix.infrastructure.util.FileOperations;
 import br.ada.t1431.pix.domain.ChavePix;
 import br.ada.t1431.pix.domain.ChavePixRepository;
@@ -24,7 +25,12 @@ public class ArquivoLocalRepository implements ChavePixRepository {
     @Override
     public ChavePix save(ChavePix chavePix) {
         List<ChavePixDTO> chaves = lerTodasAsChaves();
-        chaves.removeIf(chavePixDTO -> chavePixDTO.valorChave().equals(chavePix.getValor()) && chavePix.getTipo() == TipoDeChavePix.valueOf(chavePixDTO.tipoChave()));
+        boolean chaveJaExistente = chaves.stream().anyMatch(chave -> chave.valorChave().equals(chavePix.getValor()) && chave.tipoChave().equals(chavePix.getTipo().name()));
+
+        if(chaveJaExistente){
+            throw new ChaveDuplicadaException("Não foi possível salvar a chave, uma chave com esse mesmo valor e tipo já existe no arquivo de chaves");
+        }
+
         chaves.add(ChavePixDTO.from(chavePix));
         escreverChaves(chaves);
         return chavePix;
