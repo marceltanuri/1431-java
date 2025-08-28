@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileOperations {
+public class FileOperationsUtil {
 
     private final Path arquivo;
     private final String nomeArquivo;
 
-    public FileOperations(String diretorio, String nomeArquivo) {
+    public FileOperationsUtil(String diretorio, String nomeArquivo) {
         Path pathDiretorio = Paths.get(diretorio);
         try {
             Files.createDirectories(pathDiretorio);
