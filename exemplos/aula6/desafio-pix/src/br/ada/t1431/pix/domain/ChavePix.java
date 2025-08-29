@@ -28,6 +28,15 @@ public class ChavePix {
         this.status = status;
     }
 
+    private ChavePix(TipoDeChavePix tipo, String valor, DadosBancarios dadosBancarios, LocalDateTime dataCriacao, Status status, LocalDateTime dataExpiracao) {
+        this.tipo = tipo;
+        this.valor = valor;
+        this.dadosBancarios = dadosBancarios;
+        this.dataCriacao = dataCriacao;
+        this.status = status;
+        this.dataExpiracao = dataExpiracao;
+    }
+
     public static ChavePix createChaveAtiva(final TipoDeChavePix tipo, final String valor, final DadosBancarios dadosBancarios) {
         ChavePix chavePix = new ChavePix(tipo, valor, dadosBancarios, LocalDateTime.now(), Status.ATIVO);
         chavePix.validar();
@@ -56,11 +65,15 @@ public class ChavePix {
      * Usa um Validador no-op apenas para satisfazer o construtor atual.
      */
     public static ChavePix fromMemento(Memento m) {
-        return new ChavePix(m.tipo(), m.valor(), m.dadosBancarios(), m.dataCriacao(), m.status());
+        return new ChavePix(m.tipo(), m.valor(), m.dadosBancarios(), m.dataCriacao(), m.status(), m.dataExpiracao);
     }
 
     public void expirar(int meses) {
         this.dataExpiracao = this.dataCriacao.plusMonths(meses);
+    }
+
+    public void expirar(LocalDateTime dataExpiracao) {
+        this.dataExpiracao = dataExpiracao;
     }
 
     private void validar() {
@@ -108,17 +121,22 @@ public class ChavePix {
     }
 
     public Status getStatus() {
+        if (isExpired()) return Status.EXPIRADA;
         return status;
+    }
+
+    public LocalDateTime getDataExpiracao() {
+        return dataExpiracao;
     }
 
     /**
      * Exporta o estado persistível da entidade
      */
     public Memento toMemento() {
-        return new Memento(this.tipo, this.valor, this.dadosBancarios, this.dataCriacao, this.status);
+        return new Memento(this.tipo, this.valor, this.dadosBancarios, this.dataCriacao, this.status, this.dataExpiracao);
     }
 
     public record Memento(TipoDeChavePix tipo, String valor, DadosBancarios dadosBancarios, LocalDateTime dataCriacao,
-                          Status status) {
+                          Status status, LocalDateTime dataExpiracao) {
     }
 }

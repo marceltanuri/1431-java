@@ -6,6 +6,7 @@ import br.ada.t1431.pix.domain.TipoDeChavePix;
 import br.ada.t1431.pix.domain.dadosBancarios.DadosBancarios;
 import br.ada.t1431.pix.domain.dadosBancarios.TipoDeContaBancaria;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public class GerenciarChavePix {
@@ -16,11 +17,20 @@ public class GerenciarChavePix {
         this.repository = repository;
     }
 
-    public ChavePix salvar(String valor, String tipoDaChave, String instituicao, String agencia, String conta, String tipoDeConta) {
+    public ChavePix cadastrarNova(String valor, String tipoDaChave, String instituicao, String agencia, String conta, String tipoDeConta) {
         DadosBancarios dadosBancarios = new DadosBancarios(instituicao, agencia, conta, TipoDeContaBancaria.valueOf(tipoDeConta.toUpperCase()));
         TipoDeChavePix tipoDeChavePix = TipoDeChavePix.valueOf(tipoDaChave.toUpperCase());
 
         ChavePix chavePix = tipoDeChavePix == TipoDeChavePix.ALEATORIA ? ChavePix.createChaveAleatoriaAtiva(dadosBancarios) : ChavePix.createChaveAtiva(tipoDeChavePix, valor, dadosBancarios);
+
+        return repository.insert(chavePix);
+    }
+
+    public ChavePix cadastrarNovaComDataDeExpiracao(String valor, String tipoDaChave, String instituicao, String agencia, String conta, String tipoDeConta, int validadeEmMeses) {
+        DadosBancarios dadosBancarios = new DadosBancarios(instituicao, agencia, conta, TipoDeContaBancaria.valueOf(tipoDeConta.toUpperCase()));
+        TipoDeChavePix tipoDeChavePix = TipoDeChavePix.valueOf(tipoDaChave.toUpperCase());
+
+        ChavePix chavePix = tipoDeChavePix == TipoDeChavePix.ALEATORIA ? ChavePix.createChaveAleatoriaAtiva(dadosBancarios) : ChavePix.createChaveAtivaComExpiracaoEmMeses(tipoDeChavePix, valor, dadosBancarios, validadeEmMeses);
 
         return repository.insert(chavePix);
     }
@@ -39,6 +49,16 @@ public class GerenciarChavePix {
         Optional<ChavePix> chavePix = repository.find(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
         if (chavePix.isPresent()) {
             chavePix.get().ativar();
+            repository.update(chavePix.get());
+        } else {
+            throw new RuntimeException("Chave não encontrada");
+        }
+    }
+
+    public void expirar(String tipoDaChave, String valor, LocalDateTime dataExpiracao) {
+        Optional<ChavePix> chavePix = repository.find(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
+        if (chavePix.isPresent()) {
+            chavePix.get().expirar(dataExpiracao);
             repository.update(chavePix.get());
         } else {
             throw new RuntimeException("Chave não encontrada");

@@ -17,14 +17,19 @@ public class CadastrarCommand implements Command {
 
     @Override
     public void execute() {
-        String instituicao = params.get("i");
-        String agencia = params.get("a");
-        String numeroDaConta = params.get("c");
-        String tipoDaConta = params.get("tc");
-        String tipoDaChave = params.get("t");
-        String valorDaChave = params.get("v");
+        final String instituicao = params.get("i");
+        final String agencia = params.get("a");
+        final String numeroDaConta = params.get("c");
+        final String tipoDaConta = params.get("tc");
+        final String tipoDaChave = params.get("t");
+        final String valorDaChave = params.get("v");
+        final String validadeEmMeses = params.get("m");
         try {
-            service.salvar(valorDaChave, tipoDaChave, instituicao, agencia, numeroDaConta, tipoDaConta);
+            if (validadeEmMeses == null) {
+                service.cadastrarNova(valorDaChave, tipoDaChave, instituicao, agencia, numeroDaConta, tipoDaConta);
+            } else {
+                service.cadastrarNovaComDataDeExpiracao(valorDaChave, tipoDaChave, instituicao, agencia, numeroDaConta, tipoDaConta, Integer.parseInt(validadeEmMeses));
+            }
             System.out.println("Chave cadastrada com sucesso!");
         } catch (Exception e) {
             System.out.println("Erro ao salvar a chave. " + e.getMessage());
