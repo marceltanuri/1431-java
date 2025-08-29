@@ -19,15 +19,5 @@ public class Main {
         GerenciarChavePix service = new GerenciarChavePix(repository);
         AppCLIController controller = new AppCLIController(service);
         controller.processar(args);
-
-        // TODO
-        // Ter uma data+hora quando a chave foi criada: a chave é automaticamente gerada pelo sistema: java.date
-        // Ao invés de excluir, as chaves serão inativadas (status: ativo, inativo)
-        // extra: data de expiração da chave (se data atual maior que data de expiração exibir que a chave está expirada)
-        //
-
     }
 }
-
-// Main -> Controler(params) -> Service -> Modelo -> Repositorio
-//              ^---------------   ^----------------------|

@@ -42,12 +42,4 @@ public class AppCLIController {
 
         command.execute();
     }
-
-    // -i: instituicao
-    // -c: numero da conta
-    // -a: agencia
-    // -tc: tipoDeContaBancaria de conta
-    // -t: tipoDeContaBancaria da chave
-    // -v: valor da chave
-    // -cmd comando
 }

@@ -62,7 +62,7 @@ public class GerenciarChavePix {
         DadosBancarios dadosBancarios = new DadosBancarios(instituicao, agencia, conta, TipoDeContaBancaria.valueOf(tipoDeConta.toUpperCase()));
         TipoDeChavePix tipoDeChavePix = TipoDeChavePix.valueOf(tipoDaChave.toUpperCase());
 
-        ChavePix chavePix = tipoDeChavePix == TipoDeChavePix.ALEATORIA ? ChavePix.createChaveAleatoriaAtiva(dadosBancarios) : ChavePix.createChaveAtivaComExpiracaoEmMeses(tipoDeChavePix, valor, dadosBancarios, validadeEmMeses);
+        ChavePix chavePix = tipoDeChavePix == TipoDeChavePix.ALEATORIA ? ChavePix.createChaveAleatoriaAtivaComExpiracaoEmMeses(dadosBancarios, validadeEmMeses) : ChavePix.createChaveAtivaComExpiracaoEmMeses(tipoDeChavePix, valor, dadosBancarios, validadeEmMeses);
 
         return repository.insert(chavePix);
     }
