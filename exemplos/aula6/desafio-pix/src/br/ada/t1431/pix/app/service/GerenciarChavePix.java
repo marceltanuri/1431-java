@@ -13,24 +13,42 @@ public class GerenciarChavePix {
 
     ChavePixRepository repository;
 
-    public GerenciarChavePix(ChavePixRepository repository){
+    public GerenciarChavePix(ChavePixRepository repository) {
         this.repository = repository;
     }
 
-    public ChavePix salvar(String valor, String tipoDaChave, String instituicao, String agencia, String conta, String tipoDeConta){
+    public ChavePix salvar(String valor, String tipoDaChave, String instituicao, String agencia, String conta, String tipoDeConta) {
 
         DadosBancarios dadosBancarios = new DadosBancarios(instituicao, agencia, conta, TipoDeContaBancaria.valueOf(tipoDeConta.toUpperCase()));
 
         ChavePix chavePix = ChavePixFactory.create(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor, dadosBancarios);
 
-        return repository.save(chavePix);
+        return repository.insert(chavePix);
     }
 
-    public void remover(String tipoDaChave, String valor){
-        repository.delete(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
+    public void inativar(String tipoDaChave, String valor) {
+        Optional<ChavePix> chavePix = repository.find(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
+        if (chavePix.isPresent()) {
+            chavePix.get().inativar();
+            repository.update(chavePix.get());
+        } else {
+            throw new RuntimeException("Chave não encontrada");
+        }
+
     }
 
-    public Optional<ChavePix> buscar(String tipoDaChave, String valor){
+    public void ativar(String tipoDaChave, String valor) {
+        Optional<ChavePix> chavePix = repository.find(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
+        if (chavePix.isPresent()) {
+            chavePix.get().ativar();
+            repository.update(chavePix.get());
+        } else {
+            throw new RuntimeException("Chave não encontrada");
+        }
+
+    }
+
+    public Optional<ChavePix> buscar(String tipoDaChave, String valor) {
         return repository.find(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
     }
 

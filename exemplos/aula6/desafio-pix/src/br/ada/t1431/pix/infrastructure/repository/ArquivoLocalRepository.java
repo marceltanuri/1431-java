@@ -17,7 +17,7 @@ public class ArquivoLocalRepository implements ChavePixRepository {
     }
 
     @Override
-    public ChavePix save(ChavePix chavePix) {
+    public ChavePix insert(ChavePix chavePix) {
         List<ChavePix> chaves = chavePixArquivoLocalDAO.lerTodasAsChaves();
         boolean chaveJaExistente = chaves.stream().anyMatch(chave -> chave.getValor().equals(chavePix.getValor()) && chave.getTipo().name().equalsIgnoreCase(chavePix.getTipo().name()));
 
@@ -30,18 +30,22 @@ public class ArquivoLocalRepository implements ChavePixRepository {
         return chavePix;
     }
 
-
     @Override
-    public void delete(TipoDeChavePix tipo, String valor) {
+    public ChavePix update(ChavePix chavePix) {
         List<ChavePix> chaves = chavePixArquivoLocalDAO.lerTodasAsChaves();
-        boolean foiRemovido = chaves.removeIf(chave -> chave.getValor().equals(valor) && chave.getTipo().name().equalsIgnoreCase(tipo.name()));
+        boolean chaveJaExistente = chaves.stream().anyMatch(chave -> chave.getValor().equals(chavePix.getValor()) && chave.getTipo().name().equalsIgnoreCase(chavePix.getTipo().name()));
 
-        if (!foiRemovido) {
-            return;
+        if (!chaveJaExistente) {
+            throw new RuntimeException("Chave não encontrada");
         }
 
+        chaves.removeIf(chave -> chave.getValor().equals(chavePix.getValor()) && chave.getTipo().name().equalsIgnoreCase(chavePix.getTipo().name()));
+
+        chaves.add(chavePix);
         chavePixArquivoLocalDAO.escreverChaves(chaves);
+        return chavePix;
     }
+
 
     @Override
     public Optional<ChavePix> find(TipoDeChavePix tipo, String valor) {

@@ -1,8 +1,9 @@
 package br.ada.t1431.pix.app.controller.command;
 
+import br.ada.t1431.pix.app.controller.command.impl.AtivarCommand;
 import br.ada.t1431.pix.app.controller.command.impl.BuscarCommand;
 import br.ada.t1431.pix.app.controller.command.impl.CadastrarCommand;
-import br.ada.t1431.pix.app.controller.command.impl.RemoverCommand;
+import br.ada.t1431.pix.app.controller.command.impl.InativarCommand;
 import br.ada.t1431.pix.app.service.GerenciarChavePix;
 
 import java.util.Map;
@@ -29,7 +30,8 @@ public class CommandFactory {
         return switch (cmd) {
             case "cadastrar" -> new CadastrarCommand(service, params);
             case "buscar" -> new BuscarCommand(service, params);
-            case "remover" -> new RemoverCommand(service, params);
+            case "inativar" -> new InativarCommand(service, params);
+            case "ativar" -> new AtivarCommand(service, params);
             default -> throw new IllegalStateException("Unexpected value: " + cmd);
         };
     }
