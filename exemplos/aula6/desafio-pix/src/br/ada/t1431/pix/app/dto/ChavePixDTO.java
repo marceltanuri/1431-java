@@ -6,10 +6,26 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-public record ChavePixDTO(String codigoInstituicao, String agencia, String conta, String tipoConta, String tipoChave,
-                          String valorChave, String dataCriacao, String status, String expirationInfo) {
+/**
+ * DTO para transferência de dados de uma chave Pix.
+ * Contém informações bancárias, tipo, status e expiração.
+ */
+public record ChavePixDTO(
+        String codigoInstituicao,
+        String agencia,
+        String conta,
+        String tipoConta,
+        String tipoChave,
+        String valorChave,
+        String dataCriacao,
+        String status,
+        String expirationInfo) {
 
-
+    /**
+     * Cria um DTO a partir de uma entidade ChavePix.
+     * @param chavePix entidade ChavePix
+     * @return DTO correspondente
+     */
     public static ChavePixDTO from(ChavePix chavePix) {
         String expirationInfo = getExpirationInfo(chavePix);
 
@@ -18,6 +34,11 @@ public record ChavePixDTO(String codigoInstituicao, String agencia, String conta
         return new ChavePixDTO(chavePix.getDadosBancarios().codigoBanco(), chavePix.getDadosBancarios().agencia(), chavePix.getDadosBancarios().conta(), chavePix.getDadosBancarios().tipoDeContaBancaria().name(), chavePix.getTipo().name(), chavePix.getValor(), dataCriacaoFormatted, chavePix.getStatus().name(), expirationInfo);
     }
 
+    /**
+     * Retorna informações sobre a expiração da chave Pix.
+     * @param chavePix entidade ChavePix
+     * @return String informando se está expirada ou quando expira
+     */
     private static String getExpirationInfo(ChavePix chavePix) {
 
         if (chavePix.getDataExpiracao() == null) {

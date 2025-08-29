@@ -2,7 +2,15 @@ package br.ada.t1431.pix.domain.validador.impl;
 import br.ada.t1431.pix.domain.exception.ChavePixInvalidaException;
 import br.ada.t1431.pix.domain.validador.Validador;
 
+/**
+ * Validador para chaves Pix do tipo CNPJ.
+ */
 public class ValidadorCNPJ implements Validador {
+    /**
+     * Valida se o valor informado é um CNPJ válido.
+     * @param valor valor da chave Pix
+     * @throws ChavePixInvalidaException se o formato ou dígitos verificadores forem inválidos
+     */
     @Override
     public void validar(String valor) throws ChavePixInvalidaException {
         final String REGEX_FORMATO_CNPJ = "\\d{14}";

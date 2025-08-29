@@ -9,11 +9,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Utilitário para operações de leitura e escrita de arquivos.
+ * Usado para persistir dados das chaves Pix.
+ */
 public class FileOperationsUtil {
 
     private final Path arquivo;
     private final String nomeArquivo;
 
+    /**
+     * Cria uma instância do utilitário para um diretório e arquivo específico.
+     * @param diretorio diretório onde o arquivo será salvo
+     * @param nomeArquivo nome do arquivo
+     */
     public FileOperationsUtil(String diretorio, String nomeArquivo) {
         Path pathDiretorio = Paths.get(diretorio);
         try {
@@ -28,7 +37,7 @@ public class FileOperationsUtil {
     /**
      * Lê todas as linhas do arquivo associado a esta instância.
      * Se o arquivo não existir, retorna uma lista vazia.
-     * @return Uma lista de strings, onde cada string é uma linha do arquivo.
+     * @return lista de strings, cada uma representando uma linha do arquivo
      */
     public List<String> lerLinhas() {
         if (!Files.exists(arquivo)) {
@@ -43,8 +52,7 @@ public class FileOperationsUtil {
 
     /**
      * Escreve uma lista de strings no arquivo, sobrescrevendo o conteúdo existente.
-     * Cada string na lista será escrita como uma nova linha no arquivo.
-     * @param linhas A lista de strings a serem escritas no arquivo.
+     * @param linhas lista de strings a serem escritas
      */
     public void escreverLinhas(List<String> linhas) {
         try {

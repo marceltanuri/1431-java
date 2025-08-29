@@ -9,14 +9,35 @@ import br.ada.t1431.pix.domain.dadosBancarios.TipoDeContaBancaria;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Serviço responsável pelo gerenciamento das chaves Pix.
+ * Permite cadastrar, ativar, inativar e expirar chaves Pix.
+ */
 public class GerenciarChavePix {
 
+    /**
+     * Repositório de chaves Pix.
+     */
     ChavePixRepository repository;
 
+    /**
+     * Construtor do serviço.
+     * @param repository repositório de chaves Pix
+     */
     public GerenciarChavePix(ChavePixRepository repository) {
         this.repository = repository;
     }
 
+    /**
+     * Cadastra uma nova chave Pix.
+     * @param valor valor da chave
+     * @param tipoDaChave tipo da chave
+     * @param instituicao instituição bancária
+     * @param agencia agência bancária
+     * @param conta número da conta
+     * @param tipoDeConta tipo de conta bancária
+     * @return chave Pix cadastrada
+     */
     public ChavePix cadastrarNova(String valor, String tipoDaChave, String instituicao, String agencia, String conta, String tipoDeConta) {
         DadosBancarios dadosBancarios = new DadosBancarios(instituicao, agencia, conta, TipoDeContaBancaria.valueOf(tipoDeConta.toUpperCase()));
         TipoDeChavePix tipoDeChavePix = TipoDeChavePix.valueOf(tipoDaChave.toUpperCase());
@@ -26,6 +47,17 @@ public class GerenciarChavePix {
         return repository.insert(chavePix);
     }
 
+    /**
+     * Cadastra uma nova chave Pix com data de expiração.
+     * @param valor valor da chave
+     * @param tipoDaChave tipo da chave
+     * @param instituicao instituição bancária
+     * @param agencia agência bancária
+     * @param conta número da conta
+     * @param tipoDeConta tipo de conta bancária
+     * @param validadeEmMeses validade em meses
+     * @return chave Pix cadastrada
+     */
     public ChavePix cadastrarNovaComDataDeExpiracao(String valor, String tipoDaChave, String instituicao, String agencia, String conta, String tipoDeConta, int validadeEmMeses) {
         DadosBancarios dadosBancarios = new DadosBancarios(instituicao, agencia, conta, TipoDeContaBancaria.valueOf(tipoDeConta.toUpperCase()));
         TipoDeChavePix tipoDeChavePix = TipoDeChavePix.valueOf(tipoDaChave.toUpperCase());
@@ -35,6 +67,11 @@ public class GerenciarChavePix {
         return repository.insert(chavePix);
     }
 
+    /**
+     * Inativa uma chave Pix.
+     * @param tipoDaChave tipo da chave
+     * @param valor valor da chave
+     */
     public void inativar(String tipoDaChave, String valor) {
         Optional<ChavePix> chavePix = repository.find(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
         if (chavePix.isPresent()) {
@@ -45,6 +82,11 @@ public class GerenciarChavePix {
         }
     }
 
+    /**
+     * Ativa uma chave Pix.
+     * @param tipoDaChave tipo da chave
+     * @param valor valor da chave
+     */
     public void ativar(String tipoDaChave, String valor) {
         Optional<ChavePix> chavePix = repository.find(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
         if (chavePix.isPresent()) {
@@ -55,6 +97,12 @@ public class GerenciarChavePix {
         }
     }
 
+    /**
+     * Expira uma chave Pix na data informada.
+     * @param tipoDaChave tipo da chave
+     * @param valor valor da chave
+     * @param dataExpiracao data de expiração
+     */
     public void expirar(String tipoDaChave, String valor, LocalDateTime dataExpiracao) {
         Optional<ChavePix> chavePix = repository.find(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
         if (chavePix.isPresent()) {
@@ -65,6 +113,12 @@ public class GerenciarChavePix {
         }
     }
 
+    /**
+     * Busca uma chave Pix.
+     * @param tipoDaChave tipo da chave
+     * @param valor valor da chave
+     * @return chave Pix encontrada
+     */
     public Optional<ChavePix> buscar(String tipoDaChave, String valor) {
         return repository.find(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor);
     }
