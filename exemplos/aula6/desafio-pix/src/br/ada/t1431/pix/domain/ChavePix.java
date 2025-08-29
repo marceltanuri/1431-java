@@ -14,6 +14,7 @@ public class ChavePix {
     private final DadosBancarios dadosBancarios;
     private final LocalDateTime dataCriacao;
     private Status status;
+    private LocalDateTime dataExpiracao;
 
     private final Validador validador;
 
@@ -37,6 +38,10 @@ public class ChavePix {
 
     private void validar() {
         validador.validar(this.valor);
+    }
+
+    public boolean isExpired(){
+        return LocalDateTime.now().isAfter(dataExpiracao);
     }
 
     public void inativar(){
