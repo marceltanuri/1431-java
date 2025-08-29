@@ -2,30 +2,53 @@ package br.ada.t1431.pix.domain;
 
 import br.ada.t1431.pix.domain.dadosBancarios.DadosBancarios;
 import br.ada.t1431.pix.domain.validador.Validador;
+import br.ada.t1431.pix.domain.validador.impl.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-// 4 principios da POO
-// Abstração, Encapsulamento, Herança, Polimorfismo
 public class ChavePix {
 
-    private final TipoDeChavePix tipo;
-    private final String valor;
-    private final DadosBancarios dadosBancarios;
-    private final LocalDateTime dataCriacao;
+    private TipoDeChavePix tipo;
+    private String valor;
+    private DadosBancarios dadosBancarios;
+    private LocalDateTime dataCriacao;
     private Status status;
     private LocalDateTime dataExpiracao;
 
-    private final Validador validador;
+    private ChavePix() {
 
-    ChavePix(TipoDeChavePix tipo, String valor, DadosBancarios dadosBancarios, LocalDateTime dataCriacao, Status status, Validador validador) {
+    }
+
+    private ChavePix(TipoDeChavePix tipo, String valor, DadosBancarios dadosBancarios, LocalDateTime dataCriacao, Status status) {
         this.tipo = tipo;
         this.valor = valor;
         this.dadosBancarios = dadosBancarios;
-        this.validador = validador;
         this.dataCriacao = dataCriacao;
         this.status = status;
-        validar();
+    }
+
+    public static ChavePix createChaveAtiva(final TipoDeChavePix tipo, final String valor, final DadosBancarios dadosBancarios) {
+        ChavePix chavePix = new ChavePix(tipo, valor, dadosBancarios, LocalDateTime.now(), Status.ATIVO);
+        chavePix.validar();
+        return chavePix;
+    }
+
+    public static ChavePix createChaveAtivaComExpiracaoEmMeses(final TipoDeChavePix tipo, final String valor, final DadosBancarios dadosBancarios, int meses) {
+        ChavePix chavePix = new ChavePix(tipo, valor, dadosBancarios, LocalDateTime.now(), Status.ATIVO);
+        chavePix.expirar(meses);
+        chavePix.validar();
+        return chavePix;
+    }
+
+    public static ChavePix createChaveAleatoriaAtiva(final DadosBancarios dadosBancarios) {
+        return createChaveAtiva(TipoDeChavePix.ALEATORIA, UUID.randomUUID().toString(), dadosBancarios);
+    }
+
+    public static ChavePix createChaveAleatoriaAtivaComExpiracaoEmMeses(final DadosBancarios dadosBancarios, int meses) {
+        ChavePix chaveAtiva = createChaveAtiva(TipoDeChavePix.ALEATORIA, UUID.randomUUID().toString(), dadosBancarios);
+        chaveAtiva.expirar(meses);
+        return chaveAtiva;
     }
 
     /**
@@ -33,25 +56,40 @@ public class ChavePix {
      * Usa um Validador no-op apenas para satisfazer o construtor atual.
      */
     public static ChavePix fromMemento(Memento m) {
-        return new ChavePix(m.tipo(), m.valor(), m.dadosBancarios(), m.dataCriacao(), m.status(),  NoOpValidador.INSTANCE);
+        return new ChavePix(m.tipo(), m.valor(), m.dadosBancarios(), m.dataCriacao(), m.status());
+    }
+
+    public void expirar(int meses) {
+        this.dataExpiracao = this.dataCriacao.plusMonths(meses);
     }
 
     private void validar() {
+        final Validador validador = resolveValidador();
         validador.validar(this.valor);
     }
 
-    public boolean isExpired(){
-        return LocalDateTime.now().isAfter(dataExpiracao);
+    private Validador resolveValidador() {
+        return switch (tipo) {
+            case CPF -> new ValidadorCPF();
+            case CNPJ -> new ValidadorCNPJ();
+            case EMAIL -> new ValidadorEmail();
+            case CELULAR -> new ValidadorCelular();
+            case ALEATORIA -> new ValidadorAleatoria();
+        };
     }
 
-    public void inativar(){
+    public boolean isExpired() {
+        if (dataExpiracao != null) return LocalDateTime.now().isAfter(dataExpiracao);
+        return false;
+    }
+
+    public void inativar() {
         this.status = Status.INATIVO;
     }
 
-    public void ativar(){
+    public void ativar() {
         this.status = Status.ATIVO;
     }
-
 
     public TipoDeChavePix getTipo() {
         return tipo;
@@ -80,24 +118,7 @@ public class ChavePix {
         return new Memento(this.tipo, this.valor, this.dadosBancarios, this.dataCriacao, this.status);
     }
 
-    /* ============================
-       MEMENTO / SNAPSHOT (DDD-friendly)
-       ============================ */
-    public record Memento(TipoDeChavePix tipo, String valor, DadosBancarios dadosBancarios, LocalDateTime dataCriacao, Status status) {
-    }
-
-    /**
-     * Validador no-op (não persiste; apenas evita validação na reconstituição)
-     */
-    private static final class NoOpValidador implements Validador {
-        private static final NoOpValidador INSTANCE = new NoOpValidador();
-
-        private NoOpValidador() {
-        }
-
-        @Override
-        public void validar(String valor) {
-            // intencionalmente vazio: reconstituição confia no estado persistido
-        }
+    public record Memento(TipoDeChavePix tipo, String valor, DadosBancarios dadosBancarios, LocalDateTime dataCriacao,
+                          Status status) {
     }
 }

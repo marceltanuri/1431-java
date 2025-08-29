@@ -28,6 +28,7 @@ public class BuscarCommand implements Command {
             System.out.println(ChavePixDTO.from(chavePix));
         } catch (Exception e) {
             System.out.println("Erro ao buscar a chave. " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -1,7 +1,6 @@
 package br.ada.t1431.pix.app.service;
 
 import br.ada.t1431.pix.domain.ChavePix;
-import br.ada.t1431.pix.domain.ChavePixFactory;
 import br.ada.t1431.pix.domain.ChavePixRepository;
 import br.ada.t1431.pix.domain.TipoDeChavePix;
 import br.ada.t1431.pix.domain.dadosBancarios.DadosBancarios;
@@ -18,10 +17,10 @@ public class GerenciarChavePix {
     }
 
     public ChavePix salvar(String valor, String tipoDaChave, String instituicao, String agencia, String conta, String tipoDeConta) {
-
         DadosBancarios dadosBancarios = new DadosBancarios(instituicao, agencia, conta, TipoDeContaBancaria.valueOf(tipoDeConta.toUpperCase()));
+        TipoDeChavePix tipoDeChavePix = TipoDeChavePix.valueOf(tipoDaChave.toUpperCase());
 
-        ChavePix chavePix = ChavePixFactory.create(TipoDeChavePix.valueOf(tipoDaChave.toUpperCase()), valor, dadosBancarios);
+        ChavePix chavePix = tipoDeChavePix == TipoDeChavePix.ALEATORIA ? ChavePix.createChaveAleatoriaAtiva(dadosBancarios) : ChavePix.createChaveAtiva(tipoDeChavePix, valor, dadosBancarios);
 
         return repository.insert(chavePix);
     }
@@ -34,7 +33,6 @@ public class GerenciarChavePix {
         } else {
             throw new RuntimeException("Chave não encontrada");
         }
-
     }
 
     public void ativar(String tipoDaChave, String valor) {
@@ -45,7 +43,6 @@ public class GerenciarChavePix {
         } else {
             throw new RuntimeException("Chave não encontrada");
         }
-
     }
 
     public Optional<ChavePix> buscar(String tipoDaChave, String valor) {
